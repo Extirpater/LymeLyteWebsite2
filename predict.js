@@ -19,7 +19,10 @@ $( document ).ready(async function () {
 	modelLoaded = false;
 	$('.progress-bar').show();
     console.log( "Loading model..." );
-    model = await tf.loadLayersModel('C:\Users\Edward Z\Downloads\Google-Image-Scraper-master\JS\model.json');
+   // model = await tf.loadLayersModel('C:\Users\Edward Z\Downloads\Google-Image-Scraper-master\JS\model.json');
+	model = await tf.loadLayersModel('C:\Users\Edward Z\Downloads\HackTJ\model.json');
+	
+	
     console.log( "Model loaded." );
 	$('.progress-bar').hide();
 	modelLoaded = true;
@@ -39,6 +42,7 @@ $("#predict-button").click(async function () {
 		.toFloat()
 	let predictions = await model.predict(tensor).data();
 	console.log(predictions);
+	/*
 	let top5 = Array.from(predictions)
 		.map(function (p, i) { // this is Array.map
 			return {
@@ -47,10 +51,12 @@ $("#predict-button").click(async function () {
 			};
 		}).sort(function (a, b) {
 			return b.probability - a.probability;
-		}).slice(0, 2);
+		}).slice(0, 2);*/
 
 	$("#prediction-list").empty();
-	top5.forEach(function (p) {
+	//top5.forEach(function (p) {
 		$("#prediction-list").append(`<li>${p.className}: ${p.probability.toFixed(6)}</li>`);
-		});
+		//});
+	$("#prediction-list").append(`<li>${predictions}</li>`);
+
 });
