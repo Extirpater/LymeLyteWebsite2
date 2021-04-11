@@ -20,7 +20,7 @@ $( document ).ready(async function () {
 	$('.progress-bar').show();
     console.log( "Loading model..." );
     //model = await tf.loadLayersModel('C:\Users\Edward Z\Downloads\Google-Image-Scraper-master\JS\model.json');
-	model = await tf.loadLayersModel('C:\Users\Edward Z\Downloads\HackTJ\MODEL.json');
+	model = await tf.loadLayersModel('C:\Users\Edward Z\Downloads\AprilHackTJ\static\MODEL.json');
 	
 	
     console.log( "Model loaded." );
