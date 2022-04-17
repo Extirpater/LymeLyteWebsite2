@@ -13,12 +13,11 @@ import face_recognition
 import torch
 import numpy as np
 # Get all test videos
-filename = 'ahjnxtiamx.mp4'
+#filename = 'ahjnxtiamx.mp4'
 import cv2
 # Number of frames to sample (evenly spaced) from each video
 n_frames = 10
 
-print('hi')
 
 class Classifier:
     def __init__():
@@ -68,71 +67,72 @@ class Meso4(Classifier):
         y = Dense(1, activation='sigmoid')(y)
         
         return KerasModel(inputs=x, outputs=y)
-
 from keras.preprocessing.image import ImageDataGenerator
 
-MesoNet_classifier = Meso4()
-MesoNet_classifier.load("Meso4_DF")
+def run_model(filename):
+
+    MesoNet_classifier = Meso4()
+    MesoNet_classifier.load("Meso4_DF")
 
 
-with torch.no_grad():
-    face_list_whole_data=[]
-    if True:
-        try:
-            # Create video reader and find length
-            v_cap = cv2.VideoCapture(filename)
-            v_len = int(v_cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            # Pick 'n_frames' evenly spaced frames to sample
-            sample = np.linspace(0, v_len - 1, n_frames).round().astype(int)
-            face_list_1video = []
-            for j in range(v_len):
-                if j in sample:
-                    success, vframe = v_cap.read()
-                    vframe = cv2.cvtColor(vframe, cv2.COLOR_BGR2RGB)
-                    face_locations = face_recognition.face_locations(vframe)
-                    face_list_1frame=[]
-                    for face_location in face_locations:
-                    # Print the location of each face in this image
-                        top, right, bottom, left = face_location
-                    #print("A face is located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(top, left, bottom, right))
-                    # Access the actual face itself:
-                        face_image = vframe[top:bottom, left:right]
-                        res = cv2.resize(face_image, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
-                        face_list_1frame.append(res/255)
-                    face_list_1video.append(face_list_1frame)
-            face_list_whole_data.append(face_list_1video)
-        except KeyboardInterrupt:
-            raise Exception("Stopped.")
-            
-print(face_list_whole_data)
+    with torch.no_grad():
+        face_list_whole_data=[]
+        if True:
+            try:
+                # Create video reader and find length
+                v_cap = cv2.VideoCapture(filename)
+                v_len = int(v_cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                # Pick 'n_frames' evenly spaced frames to sample
+                sample = np.linspace(0, v_len - 1, n_frames).round().astype(int)
+                face_list_1video = []
+                for j in range(v_len):
+                    if j in sample:
+                        success, vframe = v_cap.read()
+                        vframe = cv2.cvtColor(vframe, cv2.COLOR_BGR2RGB)
+                        face_locations = face_recognition.face_locations(vframe)
+                        face_list_1frame=[]
+                        for face_location in face_locations:
+                        # Print the location of each face in this image
+                            top, right, bottom, left = face_location
+                        #print("A face is located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(top, left, bottom, right))
+                        # Access the actual face itself:
+                            face_image = vframe[top:bottom, left:right]
+                            res = cv2.resize(face_image, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
+                            face_list_1frame.append(res/255)
+                        face_list_1video.append(face_list_1frame)
+                face_list_whole_data.append(face_list_1video)
+            except KeyboardInterrupt:
+                raise Exception("Stopped.")
+
+    print(face_list_whole_data)
 
 
-all_prob_list=[0]*len(face_list_whole_data)
-print(face_list_whole_data)
-for i, video in enumerate(face_list_whole_data):
-    prob_list=[]
-    for j, frame in enumerate(video):
-        img_array=np.array(frame)
-        probabilistic_predictions = MesoNet_classifier.predict(img_array)
-        prob_list.append(probabilistic_predictions)
-    all_prob_list[i]=prob_list
-        #predictions = [num_to_label[round(x[0])] for x in probabilistic_predictions]
-        #print(predictions)
+    all_prob_list=[0]*len(face_list_whole_data)
+    print(face_list_whole_data)
+    for i, video in enumerate(face_list_whole_data):
+        prob_list=[]
+        for j, frame in enumerate(video):
+            img_array=np.array(frame)
+            probabilistic_predictions = MesoNet_classifier.predict(img_array)
+            prob_list.append(probabilistic_predictions)
+        all_prob_list[i]=prob_list
+            #predictions = [num_to_label[round(x[0])] for x in probabilistic_predictions]
+            #print(predictions)
 
 
 
-bias = -0.4
-weight = 0.068235746
-print(all_prob_list)
-submission = []
-subm_prob=[]
-for fn, prob in zip(filename, all_prob_list):
-    print(fn)
-    if prob is not None and len(prob) == 10:
-        indiv_prob=[]
-        for i in prob:
-            indiv_prob.append(i)
-    subm_prob.append(indiv_prob)
-    submission.append([os.path.basename(fn), sum(indiv_prob)/len(indiv_prob)])
-        
-print(submission[0][1])
+    bias = -0.4
+    weight = 0.068235746
+    print(all_prob_list)
+    submission = []
+    subm_prob=[]
+    for fn, prob in zip(filename, all_prob_list):
+        print(fn)
+        if prob is not None and len(prob) == 10:
+            indiv_prob=[]
+            for i in prob:
+                indiv_prob.append(i)
+        subm_prob.append(indiv_prob)
+        submission.append([os.path.basename(fn), sum(indiv_prob)/len(indiv_prob)])
+
+    return(int(submission[0][1][0]+.5))
