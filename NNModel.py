@@ -18,7 +18,6 @@ import cv2
 # Number of frames to sample (evenly spaced) from each video
 n_frames = 10
 
-print('hi')
 
 class Classifier:
     def __init__():
@@ -104,8 +103,6 @@ with torch.no_grad():
         except KeyboardInterrupt:
             raise Exception("Stopped.")
             
-print(face_list_whole_data)
-
 
 all_prob_list=[0]*len(face_list_whole_data)
 print(face_list_whole_data)
@@ -135,4 +132,4 @@ for fn, prob in zip(filename, all_prob_list):
     subm_prob.append(indiv_prob)
     submission.append([os.path.basename(fn), sum(indiv_prob)/len(indiv_prob)])
         
-print(submission[0][1])
+print(int(submission[0][1][0]+.5))
