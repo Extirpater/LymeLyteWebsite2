@@ -1,5 +1,5 @@
 let imageLoaded = false;
-$("#image-selector").change(function () {
+$("#video-selector").change(function () {
 	imageLoaded = false;
 	let reader = new FileReader();
 	reader.onload = function () {
@@ -9,7 +9,7 @@ $("#image-selector").change(function () {
 		imageLoaded = true;
 	}
 	
-	let file = $("#image-selector").prop('files')[0];
+	let file = $("#video-selector").prop('files')[0];
 	reader.readAsDataURL(file);
 });
 
